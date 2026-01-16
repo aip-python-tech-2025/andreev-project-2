@@ -1,14 +1,18 @@
-from core.service_request import ServiceRequest
-from core.category import Category
+import os
+import telebot
+import dotenv
 
-request = ServiceRequest('Починить проектор', '2025-11-15', categories=[Category('Проекторы')])
-print(request.title)
-print(request.due_date)
-print(request.is_due())
-print(request)
+dotenv.load_dotenv()
 
-another_request = ServiceRequest('Помыть доску', '2025-11-11', categories=[Category('Кабинет')])
-clone = ServiceRequest('Починить проектор', '2025-11-15', categories=[Category('Проекторы')])
+TOKEN = os.getenv('TOKEN')
+bot = telebot.TeleBot(TOKEN)
 
-print(request == another_request)
-print(request == clone)
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+	bot.reply_to(message, "Howdy, how are you doing?")
+
+@bot.message_handler(func=lambda message: True)
+def echo_all(message):
+	bot.reply_to(message, message.text)
+
+bot.infinity_polling()
